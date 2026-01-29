@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<!--
+	Dimension by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Dimension by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+			
+					<!-- Header -->
+				<header id="header">
+
+					<div class="content">
+						<div class="inner">
+							<h1>International Phonetic Alphabet Map</h1>
+							<p> Discover the sounds used by the languages all over the world.</p>
+							
+							<!-- Container for the map -->
+							<div id="chartdiv" style="width: 100%;height: 600px;"></div>
+							
+							
+						</div>
+					</div>
+				</header>
+				
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Intro -->
+							<article id="country-detail">
+				                <div id="info-panel"></div>
+							</article>
+
+					</div>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<p class="copyright">&copy; IPA Map </p>
+						<p class="copyright"> Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+					</footer>
+
+			</div>
+
+		<!-- BG -->
+			<div id="bg"></div>
+			
+
+
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+	<script src="https://unpkg.com/langs@2.0.0/langs.min.js"></script>
+    <script>
+		const specialCountries = 
+		{
+		   "MA" : ["ary", "tzm", "shi"],
+		   "DZ" : ["arz"],
+		   
+		} //dict of country code where language is not exactly equal to the ISO Code provided by restcountries API
+		
+		var languageDict = null;
+		loadPhoibleData().then((result) => {
+			languageDict = groupPhonemesByLanguage(result); 
+			console.log(languageDict);
+		})
+		.catch(console.error)
+	    
+		 
+        // Create root element
+        var root = am5.Root.new("chartdiv");
+
+        // Set themes (optional, for better visuals)
+        root.setThemes([
+            am5themes_Animated.new(root)
+        ]);
+
+        // Create map chart
+        var chart = root.container.children.push(
+            am5map.MapChart.new(root, {
+                panX: "rotateX",     // Flat panning (horizontal drag)
+                panY: "translateY",        // Flat panning (vertical drag)
+				wheelY: "zoom",      // Explicitly enable mouse wheel zoom (default, but good to set)
+				wheelX: "none",      // Disable horizontal wheel (optional, default is none)
+				minZoomLevel: 1,     // Optional: Prevent zooming out too far (1 = full world view)
+				maxZoomLevel: 32,     // Optional: Allow deep zoom (adjust as needed)
+                projection: am5map.geoMercator()
+            })
+        );
+
+        // Create polygon series for countries
+        var polygonSeries = chart.series.push(
+            am5map.MapPolygonSeries.new(root, {
+                geoJSON: am5geodata_worldLow,
+				exclude: ["AQ"] // Exclude Antarctica, because it's ugly lol
+            })
+        );
+
+        // Configure polygon template
+        polygonSeries.mapPolygons.template.setAll({
+            tooltipText: "{name}",
+            interactive: true,
+            fill: am5.color(0xbbbbbb), // Default fill color
+			stroke: am5.color(0x000000), // Black border color
+			strokeWidth: 1
+        });
+
+        // Hover state (optional)
+        polygonSeries.mapPolygons.template.states.create("hover", {
+            fill: am5.color(getRandomColor()) //random color each time you load the page
+        });
+
+		// Click event (attached to template)
+		polygonSeries.mapPolygons.template.events.on("click", function(ev) {
+			var dataItem = ev.target.dataItem;
+			var countryName = dataItem.get("name");
+			var countryId = dataItem.get("id");   // ISO 2-letter code, e.g. "FR"
+
+			if (!countryName) {
+				countryName = dataItem.dataContext?.name || "Unknown";
+			}
+			if (!countryId) {
+				countryId = dataItem.dataContext?.id || "N/A";
+			}
+
+		    // Use a reliable flag CDN (SVG for scalability; fallback to PNG if needed)
+			var flagUrl = `https://flagcdn.com/${countryId.toLowerCase()}.svg`;
+			
+			
+			fetch(`https://restcountries.com/v3.1/alpha/${countryId}`)
+				.then(res => res.json())
+				.then(data => {
+				  const country = data[0];
+				  // officielles language (ISO 639-1 ou 2)
+				  const languages = country.languages;
+				  // codes 
+				  const codes = Object.keys(languages);
+				  codes.forEach((code, index) => {
+					  if (code === "ara") {
+						codes[index] = "arz";
+					  }
+				  });
+				  console.log(countryId);
+				  console.log(codes); 
+				  var aaa = languageDict[codes[0]];
+				  console.log(aaa);
+			});
+
+
+			var info = `
+				<h2 class="major">
+				    <img src="${flagUrl}" alt="${countryName} Flag" width="32" height="24" style="vertical-align: middle; margin-right: 10px;">
+					${countryName}
+				</h2>
+				<p>Lorem ipsum dolor sit amet<p>
+			`;
+
+			document.getElementById("info-panel").innerHTML = info;
+			location.hash = "#country-detail";
+		});
+
+        // Add zoom control (optional)
+        chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
+		
+		function getRandomColor() {
+		  var r, g, b;
+		  do {
+			r = Math.floor(Math.random() * 256);
+			g = Math.floor(Math.random() * 256);
+			b = Math.floor(Math.random() * 256);
+			var max = Math.max(r, g, b);
+			var min = Math.min(r, g, b);
+		  } while (max - min < 30 && max - min > 230); // condition to not have grey colors or too flashy
+		  return '#' +
+			r.toString(16).padStart(2, '0').toUpperCase() +
+			g.toString(16).padStart(2, '0').toUpperCase() +
+			b.toString(16).padStart(2, '0').toUpperCase();
+		}
+		
+		// Function to load and parse the CSV
+		async function loadPhoibleData() {
+			const url = 'https://raw.githubusercontent.com/phoible/dev/refs/heads/master/data/phoible.csv';
+			
+			try {
+				const response = await fetch(url);
+				if (!response.ok) {
+					throw new Error(`Failed to fetch CSV: ${response.statusText}`);
+				}
+				
+				const csvText = await response.text();
+				
+				// Parse with PapaParse (async callback style for large files)
+				return new Promise((resolve, reject) => {
+					Papa.parse(csvText, {
+						header: true, // First row is headers (e.g., InventoryID, Glottocode, ISO6393, LanguageName, Phoneme)
+						dynamicTyping: true, // Auto-convert numbers/strings
+						skipEmptyLines: true,
+						complete: (results) => {
+							if (results.errors.length > 0) {
+								reject(results.errors);
+							} else {
+								resolve(results.data); // Array of objects, e.g., [{ InventoryID: 1, Glottocode: 'stan1293', ... }]
+							}
+						}
+					});
+				});
+			} catch (error) {
+				console.error('Error loading PHOIBLE data:', error);
+				return [];
+			}
+		}
+		
+		function groupPhonemesByLanguage(data) {
+			const grouped = {};
+			data.forEach(row => {
+				const lang = row.ISO6393 || row.Glottocode; // Use ISO or Glottocode as key
+				if (!grouped[lang]) grouped[lang] = new Set();
+				grouped[lang].add(row.Phoneme); // Add unique IPA symbols
+			});
+			return grouped; // e.g., { 'eng': Set(['p', 'b', 't', ...]) }
+		}
+		
+    </script>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
