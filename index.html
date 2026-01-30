@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>Dimension by HTML5 UP</title>
+		<title>IPA Map</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -66,15 +66,41 @@
     <script>
 		const specialCountries = 
 		{
+		   "AL" : ["als"],
+		   "AR" : ["spa", "gug"],
+		   "PY" : ["spa", "gug"],
+		   "BO" : ["spa", "ayr", "gug", "quh"],
 		   "MA" : ["ary", "tzm", "shi"],
 		   "DZ" : ["arz"],
-		   
 		} //dict of country code where language is not exactly equal to the ISO Code provided by restcountries API
+		
+		const countryCodes = [
+  'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AW', 'AX', 'AZ',
+  'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ', 'BR', 'BS',
+  'BT', 'BV', 'BW', 'BY', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CG', 'CH', 'CI', 'CK', 'CL', 'CM', 'CN',
+  'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE',
+  'EG', 'EH', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FK', 'FM', 'FO', 'FR', 'GA', 'GB', 'GD', 'GE', 'GF',
+  'GG', 'GH', 'GI', 'GL', 'GM', 'GN', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GW', 'GY', 'HK', 'HM',
+  'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IM', 'IN', 'IO', 'IQ', 'IR', 'IS', 'IT', 'JE', 'JM',
+  'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KY', 'KZ', 'LA', 'LB', 'LC',
+  'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MF', 'MG', 'MH', 'MK',
+  'ML', 'MM', 'MN', 'MO', 'MP', 'MQ', 'MR', 'MS', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA',
+  'NC', 'NE', 'NF', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PF', 'PG',
+  'PH', 'PK', 'PL', 'PM', 'PN', 'PR', 'PS', 'PT', 'PW', 'PY', 'QA', 'RE', 'RO', 'RS', 'RU', 'RW',
+  'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SH', 'SI', 'SJ', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS',
+  'ST', 'SV', 'SX', 'SY', 'SZ', 'TC', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TK', 'TL', 'TM', 'TN', 'TO',
+  'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'UM', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VI',
+  'VN', 'VU', 'WF', 'WS', 'YE', 'YT', 'ZA', 'ZM', 'ZW'
+];
 		
 		var languageDict = null;
 		loadPhoibleData().then((result) => {
 			languageDict = groupPhonemesByLanguage(result); 
 			console.log(languageDict);
+			countryCodes.forEach((code, index) => {
+			GetIPAByCountryCode(code);
+		});
+		
 		})
 		.catch(console.error)
 	    
@@ -123,7 +149,18 @@
         });
 
 		// Click event (attached to template)
-		polygonSeries.mapPolygons.template.events.on("click", function(ev) {
+		polygonSeries.mapPolygons.template.events.on("click", (ev) => onClick(ev));
+		
+		
+        // Add zoom control (optional)
+        chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
+		
+		
+		//===========================================//
+		// functions
+		//===========================================//
+		
+		async function onClick(ev) {
 			var dataItem = ev.target.dataItem;
 			var countryName = dataItem.get("name");
 			var countryId = dataItem.get("id");   // ISO 2-letter code, e.g. "FR"
@@ -138,26 +175,7 @@
 		    // Use a reliable flag CDN (SVG for scalability; fallback to PNG if needed)
 			var flagUrl = `https://flagcdn.com/${countryId.toLowerCase()}.svg`;
 			
-			
-			fetch(`https://restcountries.com/v3.1/alpha/${countryId}`)
-				.then(res => res.json())
-				.then(data => {
-				  const country = data[0];
-				  // officielles language (ISO 639-1 ou 2)
-				  const languages = country.languages;
-				  // codes 
-				  const codes = Object.keys(languages);
-				  codes.forEach((code, index) => {
-					  if (code === "ara") {
-						codes[index] = "arz";
-					  }
-				  });
-				  console.log(countryId);
-				  console.log(codes); 
-				  var aaa = languageDict[codes[0]];
-				  console.log(aaa);
-			});
-
+			var IPAs = await GetIPAByCountryCode(countryId);
 
 			var info = `
 				<h2 class="major">
@@ -169,11 +187,8 @@
 
 			document.getElementById("info-panel").innerHTML = info;
 			location.hash = "#country-detail";
-		});
+		}
 
-        // Add zoom control (optional)
-        chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
-		
 		function getRandomColor() {
 		  var r, g, b;
 		  do {
@@ -230,6 +245,43 @@
 				grouped[lang].add(row.Phoneme); // Add unique IPA symbols
 			});
 			return grouped; // e.g., { 'eng': Set(['p', 'b', 't', ...]) }
+		}
+		
+		async function GetIPAByCountryCode(countrycode) {
+			var codes;
+			var a = false;
+		    if (typeof specialCountries[countrycode] === 'undefined') {
+				const res = await fetch(`https://restcountries.com/v3.1/alpha/${countrycode}`);
+				const data = await res.json();
+				const country = data[0];
+				// Official languages (ISO 639-1 or 2)
+				const languages = country.languages;
+				// Codes
+				codes = Object.keys(languages);
+				codes.forEach((code, index) => {
+				  if (code === "ara") {
+					codes[index] = "arz";
+				  }
+				});
+			} else {
+			    //remove this code
+				const res = await fetch(`https://restcountries.com/v3.1/alpha/${countrycode}`);
+				const data = await res.json();
+				const country = data[0];
+				//remove this code
+				codes = specialCountries[countrycode];
+			}
+			//console.log(countrycode);
+			//console.log(codes);
+
+			var IPAList = [];
+			codes.forEach((code) => { 
+			  IPAList.push(languageDict[code]);  
+			  if ( typeof languageDict[code] === 'undefined' && !a) {console.log(country.name.common);console.log(countrycode);console.log(codes);console.log(code);}
+			});
+
+			//console.log(IPAList);
+			return IPAList;
 		}
 		
     </script>
