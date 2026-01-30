@@ -64,18 +64,20 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 	<script src="https://unpkg.com/langs@2.0.0/langs.min.js"></script>
     <script>
-		const specialCountries = 
+		const specialCountries = //dict of country code where language is not exactly equal to the ISO Code provided by restcountries API
 		{
-		   "AL" : ["als"],
-		   "AR" : ["spa", "gug"],
-		   "PY" : ["spa", "gug"],
-		   "BO" : ["spa", "ayr", "gug", "quh"],
-		   "MA" : ["ary", "tzm", "shi"],
-		   "DZ" : ["arz"],
-		} //dict of country code where language is not exactly equal to the ISO Code provided by restcountries API
+		   'AL' : ['als'],
+		   'AR' : ['spa', 'gug'],
+		   'AS' : ['eng', 'smq'],
+		   'PY' : ['spa', 'gug'],
+		   'BO' : ['spa', 'ayr', 'gug', 'quh'],
+		   'MA' : ['ary', 'tzm', 'shi'],
+		   'DZ' : ['arz'],
+		   'ZW' : ['eng', 'kck', 'nde', 'sna', 'sot', 'toi',  'xho'] // removed : 'zib' , 'ven' (venda), 'tsn' (tswana), 'tso' (tsonga), 'nya' (chewa), 'ndc' (ndau), 'khi' (khoïsan), 'bwg'
+		} 
 		
 		const countryCodes = [
-  'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AW', 'AX', 'AZ',
+  'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AR', 'AS', 'AT', 'AU', 'AW', 'AX', 'AZ',
   'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ', 'BR', 'BS',
   'BT', 'BV', 'BW', 'BY', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CG', 'CH', 'CI', 'CK', 'CL', 'CM', 'CN',
   'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE',
@@ -98,8 +100,9 @@
 			languageDict = groupPhonemesByLanguage(result); 
 			console.log(languageDict);
 			countryCodes.forEach((code, index) => {
-			GetIPAByCountryCode(code);
-		});
+				GetIPAByCountryCode(code);
+
+			});
 		
 		})
 		.catch(console.error)
@@ -249,35 +252,32 @@
 		
 		async function GetIPAByCountryCode(countrycode) {
 			var codes;
-			var a = false;
-		    if (typeof specialCountries[countrycode] === 'undefined') {
-				const res = await fetch(`https://restcountries.com/v3.1/alpha/${countrycode}`);
-				const data = await res.json();
-				const country = data[0];
-				// Official languages (ISO 639-1 or 2)
-				const languages = country.languages;
-				// Codes
-				codes = Object.keys(languages);
-				codes.forEach((code, index) => {
-				  if (code === "ara") {
-					codes[index] = "arz";
-				  }
-				});
-			} else {
-			    //remove this code
-				const res = await fetch(`https://restcountries.com/v3.1/alpha/${countrycode}`);
-				const data = await res.json();
-				const country = data[0];
+			const res = await fetch(`https://restcountries.com/v3.1/alpha/${countrycode}`);
+			const data = await res.json();
+			const country = data[0];
+			// Official languages (ISO 639-1 or 2)
+			const languages = country.languages;
+			// Codes
+			codes = Object.keys(languages);
+			codes.forEach((code, index) => {
+			  if (code === "ara") {
+				codes[index] = "arz";
+			  }
+			});
+			
+			if (typeof specialCountries[countrycode] != 'undefined')
+			{
 				//remove this code
 				codes = specialCountries[countrycode];
 			}
-			//console.log(countrycode);
+
+
 			//console.log(codes);
 
 			var IPAList = [];
 			codes.forEach((code) => { 
 			  IPAList.push(languageDict[code]);  
-			  if ( typeof languageDict[code] === 'undefined' && !a) {console.log(country.name.common);console.log(countrycode);console.log(codes);console.log(code);}
+			  if ( typeof languageDict[code] === 'undefined' ) {console.log(country.name.common);console.log(countrycode);console.log(codes);console.log(code);}
 			});
 
 			//console.log(IPAList);
