@@ -28,7 +28,7 @@ IPA Map is a web-based visualization tool that explores the phonetic diversity o
    - Frontend: HTML5, CSS3, JavaScript
    - Mapping: amCharts 5 with GeoJSON world data
    - Data Processing: PapaParse for CSV parsing, langs library for language codes
-   - Styling: HTML5 UP Dimension theme with responsive design from HTML5 UP : https://html5up.net
+   - Styling: HTML5 UP Dimension theme with responsive design (https://html5up.net)
 
 3. **Interactive Features**:
    - Click any country to view its phonetic profile
