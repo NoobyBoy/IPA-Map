@@ -1140,9 +1140,12 @@ input, select, textarea {
 			-ms-transition-delay: 0.75s;
 			transition-delay: 0.75s;
 			background-image: linear-gradient(to top, rgba(19, 21, 25, 0.5), rgba(19, 21, 25, 0.5)), url("../../images/overlay.png");
-			background-size: auto, 256px 256px;
-			background-position: center, center;
-			background-repeat: no-repeat, repeat;
+			background-size: auto,
+ 256px 256px;
+			background-position: center,
+ center;
+			background-repeat: no-repeat,
+ repeat;
 			z-index: 2;
 		}
 
@@ -1541,7 +1544,7 @@ input, select, textarea {
 			transition: opacity 0.325s ease-in-out, transform 0.325s ease-in-out;
 			padding: 4.5rem 2.5rem 1.5rem 2.5rem ;
 			position: relative;
-			width: 40rem;
+			width: 60rem;
 			max-width: 100%;
 			background-color: rgba(27, 31, 34, 0.85);
 			border-radius: 4px;
@@ -1656,3 +1659,97 @@ input, select, textarea {
 		body.is-preload #footer {
 			opacity: 0;
 		}
+
+/* IPA Chart Styles */
+
+	.ipa-chart-container {
+		font-family: Arial, sans-serif;
+		overflow-x: auto;
+	}
+	
+	.ipa-category {
+		color: #333;
+		border-bottom: 2px solid #007bff;
+		padding-bottom: 5px;
+		margin-top: 20px;
+		margin-bottom: 10px;
+	}
+	
+	.ipa-table {
+		border-collapse: collapse;
+		width: 100%;
+		margin-bottom: 20px;
+		background-color: white;
+		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	}
+	
+	.ipa-table th, .ipa-table td {
+		border: 1px solid #ddd;
+		padding: 8px;
+		text-align: center;
+		min-width: 40px;
+	}
+	
+	.ipa-table th {
+		background-color: #f8f9fa;
+		font-weight: bold;
+		color: #495057;
+	}
+	
+	.ipa-subcategory {
+		font-size: 0.9em;
+		writing-mode: vertical-rl;
+		text-orientation: mixed;
+		max-width: 60px;
+	}
+	
+	.ipa-row-label {
+		background-color: #e9ecef;
+		font-weight: bold;
+		text-align: left;
+		min-width: 100px;
+	}
+	
+	.ipa-symbol {
+		font-size: 1.2em;
+		font-weight: bold;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+	
+	.ipa-symbol.present {
+		background-color: #d4edda;
+		color: #155724;
+		border: 2px solid #28a745;
+	}
+	
+	.ipa-symbol.present:hover {
+		background-color: #c3e6cb;
+		transform: scale(1.1);
+	}
+	
+	.ipa-symbol.absent {
+		background-color: #f8f9fa;
+		color: #6c757d;
+		opacity: 0.6;
+	}
+	
+	.ipa-symbol.empty {
+		background-color: #ffffff;
+	}
+	
+	@media (max-width: 768px) {
+		.ipa-table {
+			font-size: 0.8em;
+		}
+		
+		.ipa-subcategory {
+			writing-mode: horizontal-tb;
+			text-orientation: mixed;
+		}
+		
+		.ipa-row-label {
+			min-width: 80px;
+			font-size: 0.8em;
+		}
+	}
