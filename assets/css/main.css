@@ -46,6 +46,302 @@ blockquote, q {
 		content: none;
 	}
 
+/* IPA Chart Styles */
+.ipa-chart-container {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.ipa-table-wrapper {
+    overflow-x: auto;
+    max-width: 100%;
+    margin: 10px 0;
+}
+
+.ipa-table {
+    border-collapse: collapse;
+    min-width: 800px;
+    font-size: 14px;
+}
+
+.ipa-table th, .ipa-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+    min-width: 30px;
+}
+
+.ipa-category {
+    margin: 20px 0 10px 0;
+    color: #333;
+}
+
+.ipa-subcategory {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.ipa-subheader {
+    background-color: #f9f9f9;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.ipa-row-label {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    text-align: left;
+    min-width: 120px;
+}
+
+.ipa-symbol.present {
+    background-color: #d4edda;
+    color: #155724;
+    font-weight: bold;
+    position: relative;
+    overflow: visible;
+    z-index: 1;
+}
+
+.ipa-symbol.absent {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+.ipa-symbol.empty {
+    background-color: #ffffff;
+}
+
+.base-symbol {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.consonant-cell-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+}
+
+.multi-consonant-indicator {
+    position: absolute;
+    top: -10px;
+    right: -9px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: help;
+    transition: all 0.2s ease;
+    z-index: 1;
+}
+
+.multi-consonant-indicator:hover {
+    background-color: #0056b3;
+    transform: scale(1.2);
+}
+
+.multi-consonant-indicator::after {
+    content: attr(data-multi-consonants);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: normal;
+    white-space: nowrap;
+    opacity: var(--tooltip-opacity, 0);
+    visibility: var(--tooltip-visibility, hidden);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 10000;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    max-width: 200px;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.multi-consonant-indicator::before {
+    content: '';
+    position: absolute;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #333;
+    opacity: var(--tooltip-opacity, 0);
+    visibility: var(--tooltip-visibility, hidden);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.multi-consonant-indicator:hover::after,
+.multi-consonant-indicator:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+.multi-consonant-indicator:hover::after {
+    transition-delay: 0.2s;
+}
+
+.multi-consonant-indicator:hover::before {
+    transition-delay: 0.2s;
+}
+
+/* Vowel Trapezoid Styles */
+.vowel-trapezoid-container {
+    margin: 20px auto;
+    text-align: center;
+    position: relative;
+    width: 400px;
+    height: 400px;
+}
+
+.vowel-symbol {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vowel-symbol.present circle {
+    fill: #d4edda;
+    stroke: #28a745;
+}
+
+.vowel-symbol.present text {
+    fill: #155724;
+}
+
+.vowel-symbol.absent circle {
+    fill: #f8f9fa;
+    stroke: #6c757d;
+    opacity: 0.6;
+}
+
+.vowel-symbol.absent text {
+    fill: #6c757d;
+    opacity: 0.6;
+}
+
+.vowel-symbol:hover circle {
+    fill: #c3e6cb;
+    stroke: #28a745;
+    transform: scale(1.1);
+}
+
+.multi-vowel-indicator {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.multi-vowel-indicator:hover span {
+    background-color: #0056b3;
+    transform: scale(1.2);
+}
+
+.multi-vowel-indicator::after {
+    content: attr(data-multi-vowels);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: normal;
+    white-space: nowrap;
+    opacity: var(--tooltip-opacity, 0);
+    visibility: var(--tooltip-visibility, hidden);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 10000;
+    pointer-events: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    white-space: normal;
+    max-width: 200px;
+    text-align: center;
+}
+
+.multi-vowel-indicator::before {
+    content: '';
+    position: absolute;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #333;
+    opacity: var(--tooltip-opacity, 0);
+    visibility: var(--tooltip-visibility, hidden);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.multi-vowel-indicator:hover::after,
+.multi-vowel-indicator:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+.multi-vowel-indicator:hover::after {
+    transition-delay: 0.2s;
+}
+
+.multi-vowel-indicator:hover::before {
+    transition-delay: 0.2s;
+}
+
+/* Language Button Styles */
+.language-buttons {
+    margin: 15px 0;
+}
+
+.language-btn {
+    margin: 5px;
+    padding: 8px 16px;
+    text-align: center;
+    line-height: 1;
+    vertical-align: middle;
+    background-color: #535455ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.language-btn:hover {
+    background-color: #6c6d6eff;
+}
+
+.language-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* IPA Display Styles */
+#ipa-display {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    display: none;
+}
+
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
