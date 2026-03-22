@@ -783,115 +783,124 @@ function getRowLabel(category, rowIndex) {
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeApp);
 
-// Sound mapping for IPA symbols to audio files
+// Sound mapping for IPA symbols to audio files (embedded to avoid CORS issues)
 const soundMapping = {
-    // Consonants
-    'p': 'Voiceless_bilabial_plosive.ogg',
-    'b': 'Voiced_bilabial_plosive.ogg',
-    't': 't.ogg',
-    'd': 'd.ogg',
-    'k': 'Voiceless_velar_plosive.ogg',
-    'g': 'k.ogg', // Using k sound as fallback
-    'm': 'm.ogg',
-    'n': 'n.ogg',
-    'ŋ': 'ng_nasal.ogg',
-    'f': 'f.ogg',
-    'v': 'v.ogg',
-    's': 's.ogg',
-    'z': 'z.ogg',
-    'ʃ': 'c_palatal_fricative.ogg', // Using palatal fricative as fallback
-    'ʒ': 'j.ogg', // Using j sound as fallback
-    'h': 'h.ogg',
-    'l': 'l.ogg',
-    'r': 'r.ogg',
-    'w': 'w.ogg',
-    'j': 'j.ogg',
-    'x': 'x.ogg',
-    'q': 'q.ogg',
-    'c': 'c_palatal_fricative.ogg',
-    'ç': 'c_palatal_fricative.ogg',
-    'ʝ': 'j.ogg',
-    'ɾ': 'r.ogg',
-    'ɹ': 'r.ogg',
-    'ð': 'eth_fricative.ogg',
-    'θ': 'f.ogg', // Using f as closest approximation
-    'ʤ': 'j_affricate.ogg',
-    'ʧ': 'ch_affricate.ogg',
-    'ʦ': 's.ogg', // Using s as fallback
-    'ʣ': 'z.ogg', // Using z as fallback
-    
-    // Missing consonants from IPA chart with fallbacks
-    'ʈ': 't.ogg', // Using t as fallback for retroflex plosive
-    'ɖ': 'd.ogg', // Using d as fallback for retroflex plosive
-    'ɟ': 'j.ogg', // Using j as fallback for palatal plosive
-    'ɢ': 'k.ogg', // Using k as fallback for uvular plosive
-    'ʔ': 'h.ogg', // Using h as fallback for glottal stop
-    'ɱ': 'm.ogg', // Using m as fallback for labiodental nasal
-    'ɳ': 'n.ogg', // Using n as fallback for retroflex nasal
-    'ɲ': 'j.ogg', // Using j as fallback for palatal nasal
-    'ɴ': 'ng_nasal.ogg', // Using ng as fallback for uvular nasal
-    'ʙ': 'b.ogg', // Using b as fallback for bilabial trill
-    'ʀ': 'r.ogg', // Using r as fallback for uvular trill
-    'ⱱ': 'v.ogg', // Using v as fallback for labiodental flap
-    'ɽ': 'r.ogg', // Using r as fallback for retroflex flap
-    'β': 'v.ogg', // Using v as fallback for voiced bilabial fricative
-    'ʂ': 's.ogg', // Using s as fallback for retroflex fricative
-    'ʐ': 'z.ogg', // Using z as fallback for retroflex fricative
-    'ɣ': 'x.ogg', // Using x as fallback for voiced velar fricative
-    'χ': 'x.ogg', // Using x as fallback for uvular fricative
-    'ʁ': 'r.ogg', // Using r as fallback for voiced uvular fricative
-    'ħ': 'h.ogg', // Using h as fallback for pharyngeal fricative
-    'ʕ': 'h_pharyngeal_fricative.ogg', // Using pharyngeal h as fallback
-    'ɦ': 'h.ogg', // Using h as fallback for voiced glottal fricative
-    'ɬ': 's.ogg', // Using s as fallback for lateral fricative
-    'ɮ': 'z.ogg', // Using z as fallback for voiced lateral fricative
-    'ʋ': 'v.ogg', // Using v as fallback for labiodental approximant
-    'ɻ': 'r.ogg', // Using r as fallback for retroflex approximant
-    'ɰ': 'w.ogg', // Using w as fallback for velar approximant
-    'ɭ': 'l.ogg', // Using l as fallback for retroflex lateral approximant
-    'ʎ': 'j.ogg', // Using j as fallback for palatal lateral approximant
-    'ʟ': 'l.ogg', // Using l as fallback for velar lateral approximant
-    'ǃ': 'dental_click.ogg', // Using dental click for click consonants
-    'ǂ': 'dental_click.ogg', // Using dental click as fallback
-    'ǁ': 'dental_click.ogg', // Using dental click as fallback
-    'ǀ': 'dental_click.ogg', // Using dental click as fallback
-    
-    // Vowels
-    'a': 'a.ogg',
-    'æ': 'ae_near_open_vowel.ogg',
-    'e': 'e.ogg',
-    'i': 'i.ogg',
-    'o': 'o.ogg',
-    'u': 'u.ogg',
-    'y': 'y_front_rounded_vowel.ogg',
-    'ø': 'oe_mid_front_rounded_vowel.ogg',
-    'œ': 'oe_mid_front_open_vowel.ogg',
-    'ə': 'a.ogg', // Using a as fallback for schwa
-    'ɨ': 'i.ogg', // Using i as fallback
-    'ʉ': 'u.ogg', // Using u as fallback
-    'ɯ': 'u.ogg', // Using u as fallback
-    'ɪ': 'i.ogg', // Using i as fallback
-    'ʏ': 'y_front_rounded_vowel.ogg', // Using y as fallback
-    'ʊ': 'u.ogg', // Using u as fallback
-    'ɛ': 'e.ogg', // Using e as fallback
-    'ɜ': 'e.ogg', // Using e as fallback
-    'ɞ': 'oe_mid_front_open_vowel.ogg', // Using oe as fallback
-    'ʌ': 'a.ogg', // Using a as fallback
-    'ɔ': 'o.ogg', // Using o as fallback
-    'ɐ': 'a.ogg', // Using a as fallback
-    'ɶ': 'oe_mid_front_open_vowel.ogg', // Using oe as fallback
-    'ɑ': 'a.ogg', // Using a as fallback
-    'ɒ': 'o.ogg', // Using o as fallback
-    'ɤ': 'e.ogg', // Using e as fallback
-    'ɘ': 'e.ogg', // Using e as fallback
-    'ɵ': 'oe_mid_front_rounded_vowel.ogg' // Using oe as fallback
+    "p": "p.ogg",
+    "b": "b.ogg",
+    "t": "t.ogg",
+    "d": "d.ogg",
+    "ʈ": "u0288.ogg",
+    "ɖ": "u0256.ogg",
+    "c": "c.ogg",
+    "ɟ": "u025f.ogg",
+    "k": "k.ogg",
+    "ɡ": "u0261.ogg",
+    "q": "q.ogg",
+    "ɢ": "u0262.ogg",
+    "ʔ": "u0294.ogg",
+    "m": "m.ogg",
+    "ɱ": "u0271.ogg",
+    "n": "n.ogg",
+    "ɳ": "u0273.ogg",
+    "ɲ": "u0272.ogg",
+    "ŋ": "u014b.ogg",
+    "ɴ": "u0274.ogg",
+    "m̥": "Voiceless_Bilabial_Nasal.ogg",
+    "n̥": "Voiceless_Alveolar_Nasal.ogg",
+    "ɳ̊": "u0273u030a.wav",
+    "ɲ̊": "u0272u030a.ogg",
+    "ŋ̊": "u014bu030a.wav",
+    "ʙ": "u0299.ogg",
+    "r": "r.ogg",
+    "ʀ": "u0280.ogg",
+    "ɾ": "u027e.ogg",
+    "ɽ": "u027d.ogg",
+    "ɸ": "u0278.ogg",
+    "β": "u03b2.ogg",
+    "f": "f.ogg",
+    "v": "v.ogg",
+    "θ": "u03b8.ogg",
+    "ð": "xf0.ogg",
+    "s": "s.ogg",
+    "z": "z.ogg",
+    "ʃ": "u0283.ogg",
+    "ʒ": "u0292.ogg",
+    "ʂ": "u0282.ogg",
+    "ʐ": "u0290.ogg",
+    "ç": "xe7.ogg",
+    "ʝ": "u029d.ogg",
+    "x": "x.ogg",
+    "ɣ": "u0263.ogg",
+    "χ": "u03c7.ogg",
+    "ʁ": "u0281.ogg",
+    "ħ": "u0127.ogg",
+    "ʕ": "u0295.ogg",
+    "h": "h.ogg",
+    "ɦ": "u0266.ogg",
+    "ɬ": "u026c.ogg",
+    "ɮ": "u026e.ogg",
+    "ʋ": "u028b.ogg",
+    "ɹ": "u0279.ogg",
+    "ɻ": "u027b.ogg",
+    "j": "j.ogg",
+    "ɰ": "Voiced_velar_approximant.ogg",
+    "l": "l.ogg",
+    "ɭ": "u026d.ogg",
+    "ʎ": "u028e.ogg",
+    "ʟ": "u029f.ogg"
+};
+
+// Vowel mapping for IPA symbols to audio files
+const vowelMapping = {
+    "i": "Close_front_unrounded_vowel.ogg",
+    "y": "Close_front_rounded_vowel.ogg",
+    "ɨ": "Close_central_unrounded_vowel.ogg",
+    "ʉ": "Close_central_rounded_vowel.ogg",
+    "ɯ": "Close_back_unrounded_vowel.ogg",
+    "u": "Close_back_rounded_vowel.ogg",
+    "ɪ": "Near-close_near-front_unrounded_vowel.ogg",
+    "ʏ": "Near-close_near-front_rounded_vowel.ogg",
+    "ʊ": "Near-close_near-back_rounded_vowel.ogg",
+    "e": "Close-mid_front_unrounded_vowel.ogg",
+    "ø": "Close-mid_front_rounded_vowel.ogg",
+    "ɘ": "Close-mid_central_unrounded_vowel.ogg",
+    "ɵ": "Close-mid_central_rounded_vowel.ogg",
+    "ɤ": "Close-mid_back_unrounded_vowel.ogg",
+    "o": "Close-mid_back_rounded_vowel.ogg",
+    "e̞": "Mid_front_unrounded_vowel.ogg",
+    "ø̞": "Mid_front_rounded_vowel.ogg",
+    "ə": "Mid-central_vowel.ogg",
+    "ɤ̞": "Mid_back_unrounded_vowel.ogg",
+    "o̞": "Mid_back_rounded_vowel.ogg",
+    "ɛ": "Open-mid_front_unrounded_vowel.ogg",
+    "œ": "Open-mid_front_rounded_vowel.ogg",
+    "ɜ": "Open-mid_central_unrounded_vowel.ogg",
+    "ɞ": "Open-mid_central_rounded_vowel.ogg",
+    "ʌ": "Open-mid_back_unrounded_vowel.ogg",
+    "ɔ": "Open-mid_back_rounded_vowel.ogg",
+    "æ": "Near-open_front_unrounded_vowel.ogg",
+    "ɐ": "Near-open_central_vowel.ogg",
+    "a": "Open_front_unrounded_vowel.ogg",
+    "ɶ": "Open_front_rounded_vowel.ogg",
+    "ä": "Open_central_unrounded_vowel.ogg",
+    "ɑ": "Open_back_unrounded_vowel.ogg",
+    "ɒ": "Open_back_rounded_vowel.ogg"
 };
 
 // Function to play sound for IPA symbol
 function playIPASound(ipaSymbol) {
-    const soundFile = soundMapping[ipaSymbol];
+    // Check consonants first
+    let soundFile = soundMapping[ipaSymbol];
+    let audioPath = 'assets/ipa_sounds/consonants/';
+    
+    // If not found in consonants, check vowels
+    if (!soundFile) {
+        soundFile = vowelMapping[ipaSymbol];
+        audioPath = 'assets/ipa_sounds/vowels/';
+    }
+    
     if (soundFile) {
-        const audio = new Audio(`assets/sounds/${soundFile}`);
+        const audio = new Audio(`${audioPath}${soundFile}`);
         audio.play().catch(error => {
             console.log(`Error playing sound for ${ipaSymbol}:`, error);
         });
