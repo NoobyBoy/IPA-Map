@@ -311,7 +311,6 @@ function getInfoPanel(countryName, flagUrl, IPAs) {
         </h2>
         ${languageButtons}
         <div id="ipa-display">
-            <h3>IPA Symbols:</h3>
             <div id="ipa-content"></div>
         </div>
     `;
@@ -589,8 +588,11 @@ function buildIPATable(ipaSymbols) {
                     // Data cells (each column has 2 sub-cells)
                     rowData.forEach(columnData => {
                         columnData.forEach(symbol => {
-                            if (symbol && ipaSymbols.includes(symbol)) {
-                                let cellContent = `<div class="consonant-cell-wrapper"><span class="base-symbol clickable-symbol" title="${symbol}" data-symbol="${symbol}">${symbol}</span>`;
+                            if (symbol) {
+                                let cellContent = `<div class="consonant-cell-wrapper clickable-symbol" title="${symbol}" data-symbol="${symbol}" style="width: 100%; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer;">`;
+                                
+                                // Add the symbol
+                                cellContent += `<span class="base-symbol">${symbol}</span>`;
                                 
                                 // Check if this symbol has multi-consonant variants
                                 if (multiConsonants[symbol] && multiConsonants[symbol].length > 0) {
@@ -599,16 +601,20 @@ function buildIPATable(ipaSymbols) {
                                     
                                     if (presentMultiConsonants.length > 0) {
                                         const multiConsonantList = presentMultiConsonants.join(', ');
-                                        cellContent += `<span class="multi-consonant-indicator" data-multi-consonants="${multiConsonantList}">+</span>`;
+                                        cellContent += `<span class="multi-consonant-indicator" data-multi-consonants="${multiConsonantList}" style="position: absolute; right: 5px; top: 2px;">+</span>`;
                                     }
                                 }
                                 
                                 cellContent += `</div>`;
-                                tableHTML += `<td class="ipa-symbol present">${cellContent}</td>`;
-                            } else if (symbol) {
-                                tableHTML += `<td class="ipa-symbol absent" title="${symbol}">${symbol}</td>`;
+                                
+                                // Determine if symbol is present in the language and apply appropriate styling
+                                const isPresent = ipaSymbols.includes(symbol);
+                                const cellClass = isPresent ? 'ipa-symbol present' : 'ipa-symbol absent';
+                                const cellStyle = `padding: 0; height: 40px; position: relative; ${isPresent ? '' : 'opacity: 0.6; background-color: #f8f9fa;'}`;
+                                
+                                tableHTML += `<td class="${cellClass}" style="${cellStyle}">${cellContent}</td>`;
                             } else {
-                                tableHTML += '<td class="ipa-symbol empty"></td>';
+                                tableHTML += '<td class="ipa-symbol empty" style="height: 40px;"></td>';
                             }
                         });
                     });
@@ -707,7 +713,7 @@ function buildVowelTrapezoidSVG(ipaSymbols, vowelData, multiVowels) {
             <g class="vowel-symbol ${isPresent ? 'present' : 'absent'} clickable-symbol" 
                data-symbol="${vowelSymbol}" 
                transform="translate(${vowel.x}, ${vowel.y})"
-               style="cursor: ${isPresent ? 'pointer' : 'default'};">
+               style="cursor: pointer;">
                 <circle cx="0" cy="0" r="15" fill="${isPresent ? '#d4edda' : '#f8f9fa'}" 
                         stroke="${isPresent ? '#28a745' : '#6c757d'}" stroke-width="2"/>
                 <text x="0" y="5" text-anchor="middle" font-size="16" font-weight="bold" 
@@ -794,7 +800,7 @@ const soundMapping = {
     "c": "c.ogg",
     "ɟ": "u025f.ogg",
     "k": "k.ogg",
-    "ɡ": "u0261.ogg",
+    "g": "u0261.ogg",
     "q": "q.ogg",
     "ɢ": "u0262.ogg",
     "ʔ": "u0294.ogg",
@@ -819,6 +825,7 @@ const soundMapping = {
     "β": "u03b2.ogg",
     "f": "f.ogg",
     "v": "v.ogg",
+    "ⱱ" : "Labiodental_flap.ogg",
     "θ": "u03b8.ogg",
     "ð": "xf0.ogg",
     "s": "s.ogg",
