@@ -689,16 +689,16 @@ function buildVowelTrapezoidSVG(ipaSymbols, vowelData, multiVowels) {
                 <g>
                     <!-- Trapezoid outline matching image -->
                     <path d="M 70 60 L 330 60 L 330 330 L 200 330 L 70 60 M 197 60 L 268 329 M 115 153 L 330 153 M 160 246 L 330 246" 
-                          fill="none" stroke="#000" stroke-width="1.5"/>
+                          fill="none" stroke="#fff" stroke-width="1.5"/>
                     
-                    <text x="10" y="60" font-size="12" fill="#000">Close</text>
-                    <text x="10" y="160" font-size="12" fill="#000" >Close-mid</text>
-                    <text x="10" y="250" font-size="12" fill="#000" >Open-mid</text>
-                    <text x="10" y="340" font-size="12" fill="#000" >Open</text>
+                    <text x="10" y="60" font-size="12" fill="#fff">Close</text>
+                    <text x="10" y="160" font-size="12" fill="#fff" >Close-mid</text>
+                    <text x="10" y="250" font-size="12" fill="#fff" >Open-mid</text>
+                    <text x="10" y="340" font-size="12" fill="#fff" >Open</text>
 
-                    <text x="70" y="25" font-size="12" fill="#000" text-anchor="middle">Front</text>
-                    <text x="200" y="25" font-size="12" fill="#000" text-anchor="middle">Central</text>
-                    <text x="330" y="25" font-size="12" fill="#000" text-anchor="middle">Back</text>
+                    <text x="70" y="25" font-size="12" fill="#fff" text-anchor="middle">Front</text>
+                    <text x="200" y="25" font-size="12" fill="#fff" text-anchor="middle">Central</text>
+                    <text x="330" y="25" font-size="12" fill="#fff" text-anchor="middle">Back</text>
                 </g>
                 
                 <!-- Vowel symbols -->
