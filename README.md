@@ -27,22 +27,16 @@ IPA Map is a web-based visualization tool that explores the phonetic diversity o
 
 ## How It Works
 
-### 1. Data Sources
+### Data Sources
 - **PHOIBLE Database**: Provides comprehensive phoneme inventories for thousands of languages
 - **REST Countries API**: Supplies official language information by country
 - **Custom Language Mapping**: Special handling for multilingual countries and language variants
 
-### 2. Technical Implementation
+### Technical Implementation
 - **Frontend**: Pure HTML5, CSS3, JavaScript (no framework dependencies)
 - **Mapping**: amCharts 5 with GeoJSON world data
 - **Data Processing**: PapaParse for CSV parsing, langs library for language codes
 - **Styling**: HTML5 UP Dimension theme with responsive design
-
-### 3. Interactive Features
-- Click any country to view its phonetic profile
-- Hover effects with color-coded country highlighting
-- Zoom and pan controls for detailed exploration
-- Dynamic content loading without page refresh
 
 ## Language Coverage
 
@@ -91,23 +85,13 @@ Contributions are welcome! Please consider the following:
 - **Language Data**: Help improve phoneme inventories and language mappings
 - **UI/UX**: Enhance the user interface and experience
 
-
 ### Guidelines
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature-name`
 3. Make your changes and test thoroughly
 4. Submit a pull request with a clear description
 
-
-### Attribution
-- **Design**: Based on [Dimension by HTML5 UP](https://html5up.net/dimension)
-- **Data**: PHOIBLE database and REST Countries API
-- **Icons**: Font Awesome icon library
-
-## Future Enhancements
-
-
-## Support
+### Support
 
 For questions, issues, or suggestions:
 1. Check existing [GitHub Issues](https://github.com/NoobyBoy/IPA-Map/issues)
