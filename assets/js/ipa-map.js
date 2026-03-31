@@ -153,8 +153,25 @@ async function onClick(ev) {
         countryId = dataItem.dataContext?.id || "N/A";
     }
 
+    // Show loading animation immediately
+    const loadingHTML = `
+        <h2 class="major">
+            <img src="https://flagcdn.com/${countryId.toLowerCase()}.svg" alt="${countryName} Flag" width="32" height="24" style="vertical-align: middle; margin-right: 10px;">
+            ${countryName}
+        </h2>
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <div class="loading-text">Loading language data...</div>
+        </div>
+    `;
+    document.getElementById("info-panel").innerHTML = loadingHTML;
+    location.hash = "#country-detail";
+
     // Use a reliable flag CDN (SVG for scalability; fallback to PNG if needed)
     var flagUrl = `https://flagcdn.com/${countryId.toLowerCase()}.svg`;
+    
+    // Add a small delay to ensure the loading animation is visible
+    //await new Promise(resolve => setTimeout(resolve, 500));
     
     var IPAs = await GetIPAByCountryCode(countryId);
 
@@ -179,8 +196,6 @@ async function onClick(ev) {
     if (languageButtons.length > 0) {
         languageButtons[0].click();
     }
-    
-    location.hash = "#country-detail";
 }
 
 function getRandomColor() {
