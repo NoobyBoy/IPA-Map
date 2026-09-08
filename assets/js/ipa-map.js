@@ -82,8 +82,8 @@ function initializeApp() {
     loadPhoibleData().then((result) => {
         languageDict = groupPhonemesByLanguage(result); 
         languageNameDict = groupLanguageNameByLanguageCode(result);
-        console.log(languageDict);
-        console.log(languageNameDict);
+        //console.log(languageDict);
+        //console.log(languageNameDict);
     })
     .catch(console.error);
 
@@ -153,6 +153,8 @@ async function onClick(ev) {
         countryId = dataItem.dataContext?.id || "N/A";
     }
 
+    // console.log('Country clicked:', countryName, countryId);
+
     // Show loading animation immediately
     const loadingHTML = `
         <h2 class="major">
@@ -167,17 +169,21 @@ async function onClick(ev) {
     document.getElementById("info-panel").innerHTML = loadingHTML;
     location.hash = "#country-detail";
 
+    // console.log('Loading animation displayed');
+
     // Use a reliable flag CDN (SVG for scalability; fallback to PNG if needed)
     var flagUrl = `https://flagcdn.com/${countryId.toLowerCase()}.svg`;
     
     // Add a small delay to ensure the loading animation is visible
-    //await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     var IPAs = await GetIPAByCountryCode(countryId);
+    // console.log('IPA data loaded:', IPAs);
 
     var info = getInfoPanel(countryName, flagUrl, IPAs);
 
     document.getElementById("info-panel").innerHTML = info;
+    // console.log('Country info displayed');
     
     // Add click event listeners to language buttons
     const languageButtons = document.querySelectorAll('.language-btn');
@@ -270,13 +276,24 @@ function groupLanguageNameByLanguageCode(data) {
 
 async function GetIPAByCountryCode(countrycode) {
     var codes;
-    const res = await fetch(`https://restcountries.com/v3.1/alpha/${countrycode}`);
-    const data = await res.json();
-    const country = data[0];
-    // Official languages (ISO 639-1 or 2)
-    const languages = country.languages;
-    // Codes
-    codes = Object.keys(languages);
+    var country;
+    try {
+        const res = await fetch(`https://restcountries.com/v3.1/alpha/${countrycode}`);
+        const data = await res.json();
+        country = data[0];
+        // Official languages (ISO 639-1 or 2)
+        const languages = country.languages;
+        // Codes
+        codes = Object.keys(languages);
+    } catch (error) {
+        // console.error('Direct fetch failed, trying proxy:', error);
+        // Fallback to proxy if direct fetch fails
+        const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(`https://restcountries.com/v3.1/alpha/${countrycode}`)}`);
+        const data = await res.json();
+        country = data[0];
+        const languages = country.languages;
+        codes = Object.keys(languages);
+    }
     codes.forEach((code, index) => {
         if (code === "ara") {
             codes[index] = "arb";
@@ -304,7 +321,7 @@ async function GetIPAByCountryCode(countrycode) {
 }
 
 function getInfoPanel(countryName, flagUrl, IPAs) {
-    console.log(IPAs);
+    // console.log(IPAs);
     
     // Create language buttons from LanguageNameList
     var languageButtons = '';
@@ -316,7 +333,7 @@ function getInfoPanel(countryName, flagUrl, IPAs) {
             }
         });
         languageButtons += '</div>';
-        console.log(IPAs);
+        // console.log(IPAs);
     }
     
     var info = `
@@ -504,28 +521,28 @@ function detectMultiVowels(ipaSymbols) {
 function testMultiConsonantDetection() {
     const testSymbols = ['p', 'b', 't', 'd', 'm', 'n', 'ts', 'tʃ', 'dʒ', 'mʲ', 'kʷ', 'sʲ', 'zʲ'];
     const result = detectMultiConsonants(testSymbols);
-    console.log('Test symbols:', testSymbols);
-    console.log('Detected multi-consonants:', result);
+    // console.log('Test symbols:', testSymbols);
+    // console.log('Detected multi-consonants:', result);
     return result;
 }
 
 function testMultiVowelDetection() {
     const testSymbols = ['i', 'e', 'a', 'o', 'u', 'iː', 'eː', 'aː', 'oː', 'uː', 'ai', 'au', 'ei', 'oi', 'ui'];
     const result = detectMultiVowels(testSymbols);
-    console.log('Test vowel symbols:', testSymbols);
-    console.log('Detected multi-vowels:', result);
+    // console.log('Test vowel symbols:', testSymbols);
+    // console.log('Detected multi-vowels:', result);
     return result;
 }
 
 function buildIPATable(ipaSymbols) {
     // Detect multi-consonant combinations
     const multiConsonants = detectMultiConsonants(ipaSymbols);
-    console.log('IPA Symbols:', ipaSymbols);
-    console.log('Detected multi-consonants:', multiConsonants);
+    // console.log('IPA Symbols:', ipaSymbols);
+    // console.log('Detected multi-consonants:', multiConsonants);
     
     // Detect multi-vowel combinations
     const multiVowels = detectMultiVowels(ipaSymbols);
-    console.log('Detected multi-vowels:', multiVowels);
+    // console.log('Detected multi-vowels:', multiVowels);
     
     // Define IPA chart structure with categories and symbols
     const ipaChart = {
@@ -924,9 +941,9 @@ function playIPASound(ipaSymbol) {
     if (soundFile) {
         const audio = new Audio(`${audioPath}${soundFile}`);
         audio.play().catch(error => {
-            console.log(`Error playing sound for ${ipaSymbol}:`, error);
+            // console.log(`Error playing sound for ${ipaSymbol}:`, error);
         });
     } else {
-        console.log(`No sound file found for IPA symbol: ${ipaSymbol}`);
+        // console.log(`No sound file found for IPA symbol: ${ipaSymbol}`);
     }
 }
