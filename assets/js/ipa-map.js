@@ -274,26 +274,38 @@ function groupLanguageNameByLanguageCode(data) {
     return grouped; 
 }
 
+// Cache en mémoire du jeu de données pays -> langues, chargé une seule fois.
+// restcountries.com a déprécié ses endpoints /v1-/v4 (dont /v3.1 utilisé ici) :
+// ils renvoient désormais une erreur JSON sans en-tête CORS, ce qui apparaît
+// dans le navigateur comme une erreur CORS. Le nouveau /v5 nécessite une clé
+// d'API, inadapté à un site statique GitHub Pages. On utilise donc directement
+// le jeu de données source (mledoze/countries, même structure "languages"),
+// servi par jsDelivr qui autorise CORS pour tout le monde, sans clé ni quota.
+var countriesDataCache = null;
+
+async function loadCountriesData() {
+    if (countriesDataCache) return countriesDataCache;
+    const res = await fetch('https://cdn.jsdelivr.net/npm/world-countries@5.1.0/countries.json');
+    if (!res.ok) throw new Error(`Impossible de charger les données pays (HTTP ${res.status})`);
+    countriesDataCache = await res.json();
+    return countriesDataCache;
+}
+
 async function GetIPAByCountryCode(countrycode) {
     var codes;
     var country;
-    try {
-        const res = await fetch(`https://restcountries.com/v3.1/alpha/${countrycode}`);
-        const data = await res.json();
-        country = data[0];
-        // Official languages (ISO 639-1 or 2)
-        const languages = country.languages;
-        // Codes
-        codes = Object.keys(languages);
-    } catch (error) {
-        // console.error('Direct fetch failed, trying proxy:', error);
-        // Fallback to proxy if direct fetch fails
-        const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(`https://restcountries.com/v3.1/alpha/${countrycode}`)}`);
-        const data = await res.json();
-        country = data[0];
-        const languages = country.languages;
-        codes = Object.keys(languages);
+    const countries = await loadCountriesData();
+    country = countries.find(c => c.cca2 === countrycode);
+
+    if (!country) {
+        console.error(`Aucun pays trouvé pour le code : ${countrycode}`);
+        return { IPAList: [], LanguageNameList: [] };
     }
+
+    // Langues officielles (codes ISO 639-3, même format que restcountries)
+    const languages = country.languages || {};
+    codes = Object.keys(languages);
+
     codes.forEach((code, index) => {
         if (code === "ara") {
             codes[index] = "arb";
